@@ -4,14 +4,13 @@ const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user')
 const path = require('path');
 
-const app = express();
-
 mongoose.connect('mongodb+srv://root:root@mon-vieux-grimoire.ccrkhxa.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
-  
+
+const app = express();
 app.use(express.json());
 
 // app.use((req, res) => {
