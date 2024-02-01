@@ -6,10 +6,9 @@ const bookRoutes = require('./routes/book');
 const userRoutes = require('./routes/user')
 const path = require('path');
 
-const db_username = process.env.MONGODB_USERNAME
-const db_password = process.env.MONGODB_PASSWORD
+const db_co = process.env.MONGODB_CO
 
-mongoose.connect(`mongodb+srv://${db_username}:${db_password}@mon-vieux-grimoire.ccrkhxa.mongodb.net/?retryWrites=true&w=majority`,
+mongoose.connect(`${db_co}`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
