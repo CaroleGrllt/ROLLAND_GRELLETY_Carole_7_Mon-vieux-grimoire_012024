@@ -41,13 +41,13 @@ exports.modifyBook = (req, res, next) => {
             } else {
                 const filename = book.imageUrl.split('/images/')[1];
                 // Si l'image a été modifiée, on tente de supprimer l'ancienne
-                fs.unlink(`images/${filename}`, (err => {
+                req.file && fs.unlink(`images/${filename}`, (err => {
                         if (err) console.log(err);
-
-                        Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
-                        .then(() => res.status(200).json({message : 'Livre modifié !'}))
-                        .catch(error => res.status(401).json({ error }));
                 }));
+
+                Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
+                .then(() => res.status(200).json({message : 'Livre modifié !'}))
+                .catch(error => res.status(401).json({ error }));
             }
         })
         .catch((error) => {
@@ -76,72 +76,40 @@ exports.deleteBook = (req, res, next) => {
 
 // Création d'une note
 exports.createRating = (req, res, next) => {
-// console.log(req) => ok, fonctionne
-
     // On vérifie que la note est comprise entre 0 et 5
     if (0 <= req.body.rating <= 5) {
-        // console.log(req.body.rating) => ok, bien reçu
-
         // Stockage de la requête dans une constante
         const ratingBook = { 
             userId: req.body.userId, 
             grade: req.body.rating 
         };
-        // console.log(ratingBook) => ok, bien reçu
-
         // Suppression du faux _id envoyé par le front
         delete ratingBook._id;
-        // console.log(ratingBook) => ok, pas de changement.
-
         // Récupération du livre auquel on veut ajouter une note
         Book.findOne({_id: req.params.id})
             .then(book => {
-                // console.log(book) => ok, on a bien le bon livre
-
                 // Création de la fonction qui permettra de calculer la moyenne des notes
                 const numAverage = (grades) => {
-                    // console.log(grades)
                     let somme = 0
                     grades.forEach(rate => {
                         somme += rate
                     })
-                
-                    return somme / grades.length
+                    return (somme / grades.length).toFixed(1)
                 }
-
                 // Création d'un tableau où stocke infos envoyé par front
                 let newRating = book.ratings;
-                // console.log(newRating) => ok, on récupère bien un tableau d'objet avec la note précédemment donnée par la personne qui a créé le livre
-
-                // newRating.push({
-                //     userId: req.body.userId,
-                //     grade: req.body.rating
-                // })
                 const userIdArray = newRating.map(ratingId => ratingId.userId);
-                // console.log(userIdArray) => on stocke bien les identifiants de toutes les personnes ayant évalué le livre 
-
                 // Si tableau précédent contient déjà l'id du user (=> .includes = true), alors erreur !
                 if (userIdArray.includes(req.auth.userId)) {
                     res.status(401).json({ message : 'Vote non autorisé' });
-                    // console.log(userIdArray + " requête échouée") 
-                    // console.log(newRating + " requête échouée")
-
                 } else {
-                    // console.log(userIdArray + " requête passée") 
-                    // console.log(newRating + " requête passée") 
-
                     newRating.push(ratingBook)
-
                     // Récupération de la note donnée parmi les infos envoyées par front (=> .map())
                     const grades = newRating.map(ratingGrade => ratingGrade.grade);
-                    // console.log(grades) => ok, on récupère un tableau avec toutes les notes données 
-
                     // Calcul de la moyenne des notes du tableau grades
                     const averageRatings = numAverage(grades);
                     // console.log(averageRatings) => On obtient bien la moyenne des notes du tableau grades
-
                     book.averageRating = averageRatings;
-
                     // Mise à jour du livre avec la nouvelle note ainsi que la nouvelle moyenne des notes
                     Book.updateOne({ _id: req.params.id }, { ratings: newRating, averageRating: averageRatings, _id: req.params.id })
                         .then(() => { res.status(201).json()})
@@ -161,11 +129,8 @@ exports.createRating = (req, res, next) => {
 exports.getTopBooks = (req, res, next) => {
     Book.find()
         .then(books => {
-            // console.log(books) => on récupère un tableau d'objets, c'est à dire la totalité des livres
-            
             //méthode .sort() pour trier les données du tableau et plus précisément les données dont la clé de propriété est averageRating
             books.sort((a, b) => b.averageRating - a.averageRating);
-
             // méthode .slice() pour avoir copie portion du tableau précédent (index du tableau 0 et 3 => 0 étant le début et 3 étant l'index exclu)
             const bestBooks = books.slice(0, 3);
             res.status(200).json(bestBooks)})
