@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  BrowserRouter, Route, Routes,
-} from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom'; // ⬅️ HashRouter ici
 import SignIn from './pages/SignIn/SignIn';
 import Home from './pages/Home/Home';
 import Book from './pages/Book/Book';
@@ -20,8 +18,9 @@ function App() {
   useEffect(() => {
     setUser(connectedUser);
   }, [connectedUser]);
+
   return (
-    <BrowserRouter basename="/ROLLAND_GRELLETY_Carole_7_Mon-vieux-grimoire_012024">
+    <HashRouter> 
       <div>
         <ScrollToTop />
         <Header user={user} setUser={setUser} />
@@ -34,7 +33,7 @@ function App() {
         </Routes>
         <Footer />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

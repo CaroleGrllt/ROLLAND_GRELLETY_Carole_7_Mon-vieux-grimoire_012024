@@ -12,5 +12,5 @@ export const APP_ROUTES = {
   SIGN_IN: '/Connexion',
   ADD_BOOK: '/Ajouter',
   BOOK: '/livre/:id',
-  UPDATE_BOOK: 'livre/modifier/:id',
+  UPDATE_BOOK: '/livre/modifier/:id',
 };
