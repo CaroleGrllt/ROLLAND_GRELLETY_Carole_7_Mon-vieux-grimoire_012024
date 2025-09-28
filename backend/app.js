@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 
 const app = express();
+app.set('trust proxy', 1); // ⬅️ pour que req.protocol reflète bien "https" sur Render/Cloudflare
 
 /** 1) CORS : autorise le dev local + GitHub Pages
  *  (L’origine Pages est le domaine, pas le chemin du repo)
