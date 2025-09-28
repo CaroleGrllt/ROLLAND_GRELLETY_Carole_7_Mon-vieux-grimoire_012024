@@ -31,7 +31,7 @@ MONGODB_CO=
 
 ## Lancement de l'application
 Pour lancer l'application en mode développement, exécutez les commandes suivantes :<br/>
-D'abord dans le dossier backend : `npm start`
+D'abord dans le dossier backend : `npm dev`
 Puis dans le dossier frontend : `npm start`
 <br/><br/>
 Vous pouvez vous créer un compte utilisateur pour tester le projet

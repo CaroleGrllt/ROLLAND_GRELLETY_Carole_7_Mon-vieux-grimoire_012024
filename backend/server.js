@@ -1,47 +1,44 @@
+// server.js
 const http = require('http');
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const app = require('./app');
 
-const normalizePort = val => {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
-  return false;
-};
-const port = normalizePort(process.env.PORT || '4000');
-app.set('port', port);
-
-const errorHandler = error => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges.');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use.');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-};
+const PORT = parseInt(process.env.PORT, 10) || 4000; // Render fournit PORT
+const HOST = '0.0.0.0'; // explicite (ok local + Render)
 
 const server = http.createServer(app);
 
-server.on('error', errorHandler);
-server.on('listening', () => {
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-  console.log('Listening on ' + bind);
+server.listen(PORT, HOST, () => {
+  console.log(`API listening on http://${HOST}:${PORT}`);
 });
 
-server.listen(port);
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use.`);
+    process.exit(1);
+  }
+  if (err.code === 'EACCES') {
+    console.error(`Port ${PORT} requires elevated privileges.`);
+    process.exit(1);
+  }
+  console.error('Server error:', err);
+  process.exit(1);
+});
+
+// Arrêt propre (utile sur plateformes PaaS)
+const shutdown = (signal) => {
+  console.log(`${signal} received. Shutting down gracefully...`);
+  server.close(() => {
+    console.log('HTTP server closed.');
+    process.exit(0);
+  });
+  setTimeout(() => process.exit(1), 10_000).unref(); // force au bout de 10s
+};
+
+['SIGTERM', 'SIGINT'].forEach(sig => process.on(sig, () => shutdown(sig)));
+process.on('uncaughtException', (err) => { console.error('Uncaught exception:', err); process.exit(1); });
+process.on('unhandledRejection', (reason) => { console.error('Unhandled rejection:', reason); process.exit(1); });
