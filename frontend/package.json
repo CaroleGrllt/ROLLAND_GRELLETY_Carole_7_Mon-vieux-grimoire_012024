@@ -24,7 +24,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build && cp -n build/index.html build/404.html || true && touch build/.nojekyll",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build -b gh-pages -r git@github.com:CaroleGrllt/ROLLAND_GRELLETY_Carole_7_Mon-vieux-grimoire_012024.git"
   },
   "eslintConfig": {
     "extends": [
