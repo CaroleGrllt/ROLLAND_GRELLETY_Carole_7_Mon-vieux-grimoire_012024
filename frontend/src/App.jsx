@@ -21,7 +21,7 @@ function App() {
     setUser(connectedUser);
   }, [connectedUser]);
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/ROLLAND_GRELLETY_Carole_7_Mon-vieux-grimoire_012024">
       <div>
         <ScrollToTop />
         <Header user={user} setUser={setUser} />
