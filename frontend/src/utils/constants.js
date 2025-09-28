@@ -1,9 +1,10 @@
-const API_URL = 'http://localhost:4000';
+import { API_BASE_URL } from '../config';
+
 export const API_ROUTES = {
-  SIGN_UP: `${API_URL}/api/auth/signup`,
-  SIGN_IN: `${API_URL}/api/auth/login`,
-  BOOKS: `${API_URL}/api/books`,
-  BEST_RATED: `${API_URL}/api/books/bestrating`,
+  SIGN_UP: `${API_BASE_URL}/api/auth/signup`,
+  SIGN_IN: `${API_BASE_URL}/api/auth/login`,
+  BOOKS: `${API_BASE_URL}/api/books`,
+  BEST_RATED: `${API_BASE_URL}/api/books/bestrating`,
 };
 
 export const APP_ROUTES = {
